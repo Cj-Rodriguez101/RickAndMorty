@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/character_menu"
+        android:icon="@drawable/baseline_person_4_24"
+        app:showAsAction="always"
+        android:title="@string/character"/>
+
+    <item android:id="@+id/location_menu"
+        android:icon="@drawable/baseline_location_on_24"
+        app:showAsAction="always"
+        android:title="@string/location"/>
+
+    <item android:id="@+id/episode_menu"
+        android:icon="@drawable/baseline_video_label_24"
+        app:showAsAction="always"
+        android:title="@string/episode"/>
+</menu>
