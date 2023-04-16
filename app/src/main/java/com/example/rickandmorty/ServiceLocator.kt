@@ -7,6 +7,7 @@ import com.example.rickandmorty.network.KtorClient
 import com.example.rickandmorty.network.KtorLocationService
 import com.example.rickandmorty.network.KtorLocationServiceImpl
 import com.example.rickandmorty.network.RetrofitCharNetService
+import com.example.rickandmorty.network.RetrofitChatNetServiceImpl
 import com.example.rickandmorty.repository.CharRepository
 import com.example.rickandmorty.repository.EpisodeRepository
 import com.example.rickandmorty.repository.LocationRepository
@@ -30,7 +31,7 @@ object ServiceLocator {
     fun provideCharRepository(): CharRepository {
         synchronized(this) {
             val retrofitCharNetService = retrofitCharNetService ?: CharNetwork.charRestDb
-            return CharRepository(retrofitCharNetService = retrofitCharNetService)
+            return CharRepository(retrofitCharNetService = RetrofitChatNetServiceImpl(retrofitCharNetService))
         }
     }
 

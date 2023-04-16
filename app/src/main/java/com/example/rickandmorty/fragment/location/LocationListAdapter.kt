@@ -53,10 +53,10 @@ class LocationListAdapter(private val onClick: (MainLocation) -> Unit)
 
 object LocationDiffCallback : DiffUtil.ItemCallback<MainLocation>() {
     override fun areItemsTheSame(oldItem: MainLocation, newItem: MainLocation): Boolean {
-        return oldItem == newItem
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: MainLocation, newItem: MainLocation): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem == newItem
     }
 }

@@ -18,10 +18,16 @@ interface RetrofitCharNetService {
         @Query("page") page: Int
     ): CharResults
 
-    @GET("location")
-    suspend fun getLocationWithPage(
-        @Query("page") page: Int
-    ): LocationResults
+    @GET("character")
+    suspend fun searchCharactersWithPage(
+        @Query("name") name: String
+    ): CharResults
+
+//    @GET("character")
+//    suspend fun searchAndNewCharactersWithPage(
+//        @Query("page") page: Int,
+//        @Query("name") name: String
+//    ): CharResults
 }
 
 //private val moshi = Moshi.Builder()

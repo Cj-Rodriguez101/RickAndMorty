@@ -1,44 +1,48 @@
 package com.example.rickandmorty.paging
 
+import android.net.Uri
+import android.util.Log
+import androidx.paging.LoadState
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.rickandmorty.model.Character
 import com.example.rickandmorty.network.RetrofitCharNetService
+import com.example.rickandmorty.network.RetrofitChatNetServiceImpl
+import retrofit2.HttpException
 
 class CharacterPagingSource(
-    private val backend: RetrofitCharNetService
-    //val query: String
+    private val backend: RetrofitChatNetServiceImpl,
+    private val query: String
 ) : PagingSource<Int, Character>() {
     override suspend fun load(
         params: LoadParams<Int>
     ): LoadResult<Int, Character> {
         return try {
             // Start refresh at page 1 if undefined.
-            val nextPageNumber = params.key ?: 1
-            val response = backend.getCharactersWithPage(nextPageNumber)
+            val pageNumber = params.key ?: 1
+            val response = backend.searchCharactersWithPage(query, pageNumber)
+
+            //Log.e("good", "no ${response.results.map { it.id }.joinToString(",")}")
+
+            //var nextPageNumber: Int? = null
+
+//            if (response.info.next != null) {
+//                val uri = Uri.parse(response.info.next)
+//                val nextPageQuery = uri.getQueryParameter("page")
+//                nextPageNumber = nextPageQuery?.toInt()
+//            }
 
             LoadResult.Page(
                 data = response.results,
-                prevKey = null, // Only paging forward.
-                nextKey = response.info.next?.let {
-                    it.split("=")[1].toInt()
-                }
+                prevKey = if (pageNumber == 1) null else pageNumber - 1,
+                nextKey = if(query.isEmpty()) Uri.parse(response.info.next).getQueryParameter("page")?.toInt() else null
             )
         } catch (ex: Exception) {
-            // Handle errors in this block and return LoadResult.Error if it is an
-            // expected error (such as a network failure).
-//            val charList: ArrayList<Character> = arrayListOf()
-//            val nextPageNo = params.key?:1
-//            ex.message?.contains("Unable to resolve host")?.let {
-//                if(nextPageNo == 1){
-//                    charList.add(Character(id = RETRY_HEADER))
-//                }
-//            }
-//            if(charList.isEmpty()){
-//                LoadResult.Error(ex)
-//            } else {
-//                LoadResult.Page(data = charList.toList(), null, null)
-//            }
+                if(ex.toString().contains("HTTP 404")){
+                    return LoadResult.Page(
+                        data = listOf(), null, null
+                    )
+                }
             LoadResult.Error(ex)
         }
     }
@@ -56,4 +60,7 @@ class CharacterPagingSource(
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
+
+    override val keyReuseSupported: Boolean
+        get() = true
 }

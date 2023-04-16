@@ -1,27 +1,36 @@
 package com.example.rickandmorty.fragment.location
 
+import android.app.SearchManager
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
-import com.example.rickandmorty.databinding.FragmentCharacterListBinding
 import com.example.rickandmorty.databinding.FragmentLocationListBinding
-import com.example.rickandmorty.fragment.characters.CharListAdapter
-import com.example.rickandmorty.fragment.characters.CharViewModel
-import com.example.rickandmorty.fragment.characters.CharViewModelFactory
 import com.example.rickandmorty.util.PostsLoadStateAdapter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
-class LocationListFragment : Fragment() {
+class LocationListFragment : Fragment(), MenuProvider {
 
     lateinit var locationViewModel: LocationViewModel
     var adapter: LocationListAdapter? = null
@@ -41,8 +50,13 @@ class LocationListFragment : Fragment() {
             .inflate(inflater, container, false)
         fragBinding = binding
 
+        val menuHost: MenuHost = requireActivity()
+        (activity as MainActivity).setSupportActionBar(binding.locationToolbar)
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         binding.apply {
             adapter = LocationListAdapter (){
+                locationViewModel.setQuery("")
                 Log.e("click", it.name)
             }
 
@@ -63,8 +77,8 @@ class LocationListFragment : Fragment() {
             adapter?.refresh()
         }
 
-        lifecycleScope.launchWhenCreated {
-            locationViewModel.myMutableFlow.collect{
+        lifecycleScope.launch {
+            locationViewModel.myMutableFlow.collectLatest{
                 adapter?.submitData(it)
             }
         }
@@ -79,10 +93,29 @@ class LocationListFragment : Fragment() {
             }
         }
 
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launch {
+            adapter?.loadStateFlow?.map { it.refresh }
+                ?.distinctUntilChanged()
+                ?.collect {
+                    if (it is LoadState.NotLoading) {
+                        if(adapter?.itemCount == 0){
+                            binding.isEmptyTextView.visibility = View.VISIBLE
+                            binding.locationRecyclerView.visibility = View.GONE
+                        } else {
+                            binding.isEmptyTextView.visibility = View.GONE
+                            binding.locationRecyclerView.visibility = View.VISIBLE
+                        }
+
+                    }
+                }
+        }
+
+        lifecycleScope.launch {
             adapter?.loadStateFlow?.collectLatest { loadStates ->
                 binding.localProgressBar.isVisible = loadStates.refresh is LoadState.Loading
-                binding.locationRetryButton.isVisible = loadStates.refresh !is LoadState.Loading && loadStates.refresh is LoadState.Error
+                binding.locationRetryButton.isVisible = loadStates.refresh !is LoadState.Loading
+                        && loadStates.refresh is LoadState.Error
+                        && loadStates.source.refresh is LoadState.Error
                 binding.locationErrorMsg.isVisible = loadStates.refresh is LoadState.Error
             }
         }
@@ -94,5 +127,44 @@ class LocationListFragment : Fragment() {
         super.onDestroyView()
         adapter = null
         fragBinding = null
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.location_menu, menu)
+
+        val applicationContext = requireContext().applicationContext
+
+        val searchManager = ContextCompat.getSystemService(
+            applicationContext,
+            SearchManager::class.java
+        ) as SearchManager
+        (menu.findItem(R.id.location_search_menu).actionView as SearchView).apply {
+            // Assumes current activity is the searchable activity
+            setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
+            setIconifiedByDefault(true)
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    locationViewModel.setQuery(newText?.trim()?:"")
+                    fragBinding?.locationRecyclerView?.layoutManager?.scrollToPosition(0)
+                    return true
+                }
+            })
+        }
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return when (menuItem.itemId) {
+            R.id.location_search_menu -> {
+                // clearCompletedTasks()
+                true
+            }
+
+            else -> false
+        }
     }
 }

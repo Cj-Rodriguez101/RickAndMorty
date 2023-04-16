@@ -82,6 +82,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <TextView
+                    android:id="@+id/is_empty_textView"
+                    android:layout_margin="16dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:text="No Items Present"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_margin="16dp"
                     android:layout_gravity="center"

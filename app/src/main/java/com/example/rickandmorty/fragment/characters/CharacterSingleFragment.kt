@@ -19,7 +19,9 @@ import com.bumptech.glide.Glide
 import com.example.rickandmorty.R
 import com.example.rickandmorty.databinding.FragmentCharacterListBinding
 import com.example.rickandmorty.databinding.FragmentCharacterSingleBinding
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 class CharacterSingleFragment : Fragment() {
 
     private val charViewModel: CharViewModel by viewModels({requireParentFragment()})
@@ -70,6 +72,7 @@ class CharacterSingleFragment : Fragment() {
         if (backCallback == null){
             backCallback = object : OnBackPressedCallback(true){
                 override fun handleOnBackPressed() {
+                    charViewModel.setQuery("")
                     charViewModel.setCharacter(null)
                     findNavController().popBackStack() }
             }

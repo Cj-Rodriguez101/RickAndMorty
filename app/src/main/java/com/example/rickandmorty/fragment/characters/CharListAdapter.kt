@@ -22,29 +22,11 @@ class CharListAdapter(private val onClick: (Character) -> Unit):
         return CharViewHolder(view, onClick)
     }
 
-
-
     override fun onBindViewHolder(holder: CharViewHolder, position: Int) {
         getItem(position)?.let {
             holder.bind(it)
         }
     }
-
-//    override fun getItemViewType(position: Int): Int {
-//        var viewType = ITEM_LIST_VIEW_TYPE
-//        getItem(position)?.let{
-//            if(it.id==NO_INTERNET_HEADER){
-//                viewType = NO_INTERNET_VIEW_TYPE
-//            }else if(it.id == RETRY_HEADER){
-//                viewType = RETRY_VIEW_TYPE
-//            }
-//        }
-//        return viewType
-//    }
-
-//    override fun getItemViewType(position: Int): Int {
-//        return super.getItemViewType(position)
-//    }
 
     class CharViewHolder(itemView: View, onClick: (Character) -> Unit): RecyclerView.ViewHolder(itemView){
         private val charTextView: TextView? = itemView.findViewById(R.id.char_name)
@@ -82,10 +64,10 @@ class CharListAdapter(private val onClick: (Character) -> Unit):
 
 object CharDiffCallback : DiffUtil.ItemCallback<Character>() {
     override fun areItemsTheSame(oldItem: Character, newItem: Character): Boolean {
-        return oldItem == newItem
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: Character, newItem: Character): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem == newItem
     }
 }

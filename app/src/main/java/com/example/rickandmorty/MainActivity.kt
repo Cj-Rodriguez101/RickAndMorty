@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import com.example.rickandmorty.R
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -24,11 +25,13 @@ class MainActivity : AppCompatActivity() {
 
     private var demoCollectionAdapter: DemoCollectionAdapter? = null
     private var callback: ViewPager2.OnPageChangeCallback? = null
+    private var activityBinding: ActivityMainBinding? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //setContentView(R.layout.activity_main)
         val binding = DataBindingUtil
             .setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        activityBinding = binding
 
         if (demoCollectionAdapter == null) {
             demoCollectionAdapter = DemoCollectionAdapter(
@@ -81,11 +84,20 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         demoCollectionAdapter = null
         callback = null
+        activityBinding = null
     }
 
-    fun changeOrientation(orientation: Int){
-        requestedOrientation = orientation
+    fun changeOrientation(isFullScreen: Boolean){
+        if (isFullScreen){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+            activityBinding?.bottomNavigation?.visibility = View.GONE
+        } else {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+            activityBinding?.bottomNavigation?.visibility = View.VISIBLE
+        }
     }
+
+
 }
 
 class DemoCollectionAdapter(fragmentManager: FragmentManager,

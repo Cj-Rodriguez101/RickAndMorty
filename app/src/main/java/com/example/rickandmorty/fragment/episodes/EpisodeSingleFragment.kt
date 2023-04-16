@@ -44,7 +44,7 @@ class EpisodeSingleFragment : Fragment() {
 
         val iFramePlayerOptions = IFramePlayerOptions.Builder()
             .controls(1)
-            .fullscreen(1) // enable full screen button
+            .fullscreen(1).autoplay(1)
             .build()
         fragBinding = binding
         lifecycle.addObserver(binding.youtubePlayerView)
@@ -52,7 +52,11 @@ class EpisodeSingleFragment : Fragment() {
         val navController = findNavController()
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             when (destination.id) {
-                R.id.episodeSingleFragment -> binding.singleToolbar.title = episodeViewModel.selectedEpisode.value!!.name
+                R.id.episodeSingleFragment -> {
+                    episodeViewModel.selectedEpisode.value?.let { episode->
+                        binding.singleToolbar.title = episode.name
+                    }
+                }
             }
         }
         val appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -78,10 +82,14 @@ class EpisodeSingleFragment : Fragment() {
             backCallback = object : OnBackPressedCallback(true){
                 override fun handleOnBackPressed() {
 
-                    (requireActivity() as MainActivity).changeOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                    //(requireActivity() as MainActivity).changeOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                     if (isFullscreen) {
                         // if the player is in fullscreen, exit fullscreen
                         youTubePlayerOut?.toggleFullscreen()
+                        (requireActivity() as MainActivity).changeOrientation(false)
+
+                        // the video will continue playing in the player
+                        binding.singleToolbar.visibility = View.VISIBLE
                     } else {
                         episodeViewModel.setEpisode(null)
                         findNavController().popBackStack()
@@ -94,20 +102,23 @@ class EpisodeSingleFragment : Fragment() {
             override fun onEnterFullscreen(fullscreenView: View, exitFullscreen: () -> Unit) {
                 isFullscreen = true
 
+                (requireActivity() as MainActivity).changeOrientation(true)
+
                 // the video will continue playing in fullscreenView
+                binding.singleToolbar.visibility = View.GONE
                 binding.youtubePlayerView.visibility = View.GONE
                 binding.fullScreenViewContainer.visibility = View.VISIBLE
                 binding.fullScreenViewContainer.addView(fullscreenView)
 
                 // optionally request landscape orientation
-                (requireActivity() as MainActivity).changeOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                 //requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             }
 
             override fun onExitFullscreen() {
                 isFullscreen = false
+                (requireActivity() as MainActivity).changeOrientation(false)
 
                 // the video will continue playing in the player
+                binding.singleToolbar.visibility = View.VISIBLE
                 binding.youtubePlayerView.visibility = View.VISIBLE
                 binding.fullScreenViewContainer.visibility = View.GONE
                 binding.fullScreenViewContainer.removeAllViews()

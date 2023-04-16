@@ -1,6 +1,7 @@
 package com.example.rickandmorty.fragment.location
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -13,29 +14,26 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class LocationViewModel(private val locationRepository: LocationRepository): ViewModel() {
 
-    //private val _myMutableFlow = MutableStateFlow<List<MainLocation>>(listOf())
-    val myMutableFlow = locationRepository.getPagedList().cachedIn(viewModelScope)
+    private val _query: MutableStateFlow<String> = MutableStateFlow<String>("")
+
+    val myMutableFlow = _query.flatMapLatest {
+        Log.e("mutable", it)
+        locationRepository.getPagedList(it).cachedIn(viewModelScope).distinctUntilChanged()
+    }
 
     private val _isLoading = MutableStateFlow<Boolean>(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-//    fun updateList(page:Int) {
-//        viewModelScope.launch {
-//            CoroutineScope(Dispatchers.IO).launch {
-//                _isLoading.value = true
-//                _myMutableFlow.value = locationRepository.getPagedList(page)
-//                _isLoading.value = false
-//            }
-//        }
-//    }
+    fun setQuery(query: String) {
+        _query.value = query
+    }
 
-//    init {
-//        updateList(1)
-//    }
 }
 
 @Suppress("UNCHECKED_CAST")
