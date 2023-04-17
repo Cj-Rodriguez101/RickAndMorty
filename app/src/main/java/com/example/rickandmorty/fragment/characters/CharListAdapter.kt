@@ -5,19 +5,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.rickandmorty.R
 import com.example.rickandmorty.model.Character
+import com.example.rickandmorty.util.Constants.ALIVE
+import com.example.rickandmorty.util.Constants.UNKNOWN
 
-class CharListAdapter(private val onClick: (Character) -> Unit):
-    PagingDataAdapter<Character, CharListAdapter.CharViewHolder>(CharDiffCallback)  {
+class CharListAdapter(private val onClick: (Character) -> Unit) :
+    PagingDataAdapter<Character, CharListAdapter.CharViewHolder>(CharDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharViewHolder {
         val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.char_list_item, parent, false)
+            .inflate(R.layout.char_list_item, parent, false)
 
         return CharViewHolder(view, onClick)
     }
@@ -28,7 +31,8 @@ class CharListAdapter(private val onClick: (Character) -> Unit):
         }
     }
 
-    class CharViewHolder(itemView: View, onClick: (Character) -> Unit): RecyclerView.ViewHolder(itemView){
+    class CharViewHolder(itemView: View, onClick: (Character) -> Unit) :
+        RecyclerView.ViewHolder(itemView) {
         private val charTextView: TextView? = itemView.findViewById(R.id.char_name)
         private val charStatus: TextView? = itemView.findViewById(R.id.char_status)
         private val charImageView: ImageView? = itemView.findViewById(R.id.char_image_list)
@@ -49,12 +53,27 @@ class CharListAdapter(private val onClick: (Character) -> Unit):
 
             charTextView?.text = character.name
             charStatus?.text = character.status
-            if(character.status == "Alive"){
-                charStatus?.background = itemView.context?.applicationContext?.resources?.getDrawable(R.color.teal_200)
-            }else {
-                charStatus?.background = itemView.context?.applicationContext?.resources?.getDrawable(R.color.orange)
+            when (character.status) {
+                ALIVE -> {
+                    charStatus?.background =
+                        itemView.context?.applicationContext?.let {
+                            ResourcesCompat.getDrawable(it.resources, R.color.teal_200, null)
+                        }
+                }
+                UNKNOWN -> {
+                    charStatus?.background =
+                        itemView.context?.applicationContext?.let {
+                            ResourcesCompat.getDrawable(it.resources, R.color.orange, null)
+                        }
+                }
+                else -> {
+                    charStatus?.background =
+                        itemView.context?.applicationContext?.let {
+                            ResourcesCompat.getDrawable(it.resources, R.color.red, null)
+                        }
+                }
             }
-            charImageView?.let {imageView ->
+            charImageView?.let { imageView ->
                 Glide.with(itemView).load(character.image)
                     .centerCrop().placeholder(R.drawable.baseline_person_4_24).into(imageView)
             }

@@ -2,18 +2,14 @@ package com.example.rickandmorty.fragment.characters
 
 import android.app.SearchManager
 import android.os.Bundle
-import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -25,7 +21,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
 import com.example.rickandmorty.databinding.FragmentCharacterListBinding
 import com.example.rickandmorty.util.PostsLoadStateAdapter
@@ -35,34 +30,34 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class CharacterListFragment : Fragment(), MenuProvider {
+class CharacterListFragment : Fragment(), MenuProvider
+{
 
     @OptIn(ExperimentalCoroutinesApi::class)
     lateinit var charViewModel: CharViewModel
-    var adapter: CharListAdapter? = null
+    private var adapter: CharListAdapter? = null
     private var fragBinding: FragmentCharacterListBinding? = null
-    //private val charViewModel: CharViewModel by viewModels({requireParentFragment()})
-    //private val charViewModel: CharViewModel = (requireParentFragment() as BaseCharacterFragment).charViewModel
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //charViewModel = ViewModelProvider(this, CharViewModelFactory())[CharViewModel::class.java]
-        charViewModel = ViewModelProvider(this.requireParentFragment(),
-            CharViewModelFactory())[CharViewModel::class.java]
+        charViewModel = ViewModelProvider(
+            this.requireParentFragment(),
+            CharViewModelFactory()
+        )[CharViewModel::class.java]
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding: FragmentCharacterListBinding = FragmentCharacterListBinding
             .inflate(inflater, container, false)
 
-        val menuHost: MenuHost = requireActivity()
-        (activity as MainActivity).setSupportActionBar(binding.toolbar)
-        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        binding.toolbar.inflateMenu(R.menu.character_menu)
+
+        binding.toolbar.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         fragBinding = binding
 
         val navController = findNavController()
@@ -71,22 +66,23 @@ class CharacterListFragment : Fragment(), MenuProvider {
             .setupWithNavController(binding.toolbar, navController, appBarConfiguration)
 
         binding.apply {
-            adapter = CharListAdapter(){
+            adapter = CharListAdapter() {
                 charViewModel.setCharacter(it)
                 charViewModel.setQuery("")
                 findNavController().navigate(R.id.action_characterListFragment_to_characterSingleFragment)
             }
             binding.charRecyclerView.adapter = adapter!!.apply {
                 withLoadStateHeaderAndFooter(
-                header = PostsLoadStateAdapter(adapter!!),
-                footer = PostsLoadStateAdapter(adapter!!))
+                    header = PostsLoadStateAdapter(adapter!!),
+                    footer = PostsLoadStateAdapter(adapter!!)
+                )
             }
 
-            binding.charRecyclerView.layoutManager = GridLayoutManager(requireContext().applicationContext, 3)
+            binding.charRecyclerView.layoutManager =
+                GridLayoutManager(requireContext().applicationContext, 2)
         }
 
         binding.charSwiperefresh.setOnRefreshListener {
-            //adapter?.refresh()
             adapter?.retry()
             binding.charSwiperefresh.isRefreshing = false
         }
@@ -95,24 +91,10 @@ class CharacterListFragment : Fragment(), MenuProvider {
             adapter?.refresh()
         }
         lifecycleScope.launch {
-            charViewModel.myMutablePagingFlow.collectLatest{data->
-                //adapter?.retry()
+            charViewModel.myMutablePagingFlow.collectLatest { data ->
                 adapter?.submitData(data)
             }
         }
-
-//        lifecycleScope.launch {
-//            charViewModel.myMutablePagingFlow.collectLatest{data->
-//                //adapter?.retry()
-//                if(adapter?.snapshot().isNullOrEmpty()){
-//                    binding.isEmptyTextView.visibility = View.VISIBLE
-//                    binding.charRecyclerView.visibility = View.GONE
-//                } else {
-//                    binding.isEmptyTextView.visibility = View.GONE
-//                    binding.charRecyclerView.visibility = View.VISIBLE
-//                }
-//            }
-//        }
 
         //https://stackoverflow.com/a/64526450
         lifecycleScope.launch {
@@ -120,7 +102,7 @@ class CharacterListFragment : Fragment(), MenuProvider {
                 ?.distinctUntilChanged()
                 ?.collect {
                     if (it is LoadState.NotLoading) {
-                        if(adapter?.itemCount == 0){
+                        if (adapter?.itemCount == 0) {
                             binding.isEmptyTextView.visibility = View.VISIBLE
                             binding.charRecyclerView.visibility = View.GONE
                         } else {
@@ -132,17 +114,13 @@ class CharacterListFragment : Fragment(), MenuProvider {
                 }
         }
 
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launch {
             adapter?.loadStateFlow?.collectLatest { loadStates ->
                 binding.charProgressBar.isVisible = loadStates.refresh is LoadState.Loading
                 binding.charRetryButton.isVisible = loadStates.refresh !is LoadState.Loading
                         && loadStates.refresh is LoadState.Error
                         && loadStates.source.refresh is LoadState.Error
                 binding.charErrorMsg.isVisible = loadStates.refresh is LoadState.Error
-
-//                if (loadStates.refresh is LoadState.Error){
-//                    Log.e("vision", "${(loadStates.refresh as LoadState.Error).error.toString()}")
-//                }
             }
         }
         return binding.root
@@ -154,24 +132,25 @@ class CharacterListFragment : Fragment(), MenuProvider {
         fragBinding = null
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+        @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.character_menu, menu)
+        //menuInflater.inflate(R.menu.character_menu, menu)
 
         val applicationContext = requireContext().applicationContext
 
-        val searchManager = getSystemService(applicationContext, SearchManager::class.java) as SearchManager
+        val searchManager =
+            getSystemService(applicationContext, SearchManager::class.java) as SearchManager
         (menu.findItem(R.id.character_search_menu).actionView as SearchView).apply {
             // Assumes current activity is the searchable activity
             setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
             setIconifiedByDefault(true)
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    charViewModel.setQuery(newText?.trim()?:"")
+                    charViewModel.setQuery(newText?.trim() ?: "")
                     return true
                 }
             })
@@ -179,9 +158,9 @@ class CharacterListFragment : Fragment(), MenuProvider {
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        //Not Needed Since I Use Search Button As SearchView
         return when (menuItem.itemId) {
             R.id.character_search_menu -> {
-                // clearCompletedTasks()
                 true
             }
 

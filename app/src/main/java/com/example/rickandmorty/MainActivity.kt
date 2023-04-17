@@ -1,10 +1,7 @@
 package com.example.rickandmorty
 
-//import android.R
 import android.content.pm.ActivityInfo
-import com.example.rickandmorty.R
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -15,10 +12,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.rickandmorty.databinding.ActivityMainBinding
 import com.example.rickandmorty.fragment.characters.BaseCharacterFragment
-import com.example.rickandmorty.fragment.characters.CharacterListFragment
 import com.example.rickandmorty.fragment.episodes.BaseEpisodeFragment
 import com.example.rickandmorty.fragment.location.LocationListFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +24,6 @@ class MainActivity : AppCompatActivity() {
     private var activityBinding: ActivityMainBinding? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_main)
         val binding = DataBindingUtil
             .setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         activityBinding = binding
@@ -105,6 +100,7 @@ class DemoCollectionAdapter(fragmentManager: FragmentManager,
 
     override fun getItemCount(): Int = 3
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun createFragment(position: Int): Fragment {
 
         return when(position){

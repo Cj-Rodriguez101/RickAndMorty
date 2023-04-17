@@ -1,11 +1,10 @@
 package com.example.rickandmorty
 
-import android.content.Context
 import androidx.annotation.VisibleForTesting
 import com.example.rickandmorty.network.CharNetwork
 import com.example.rickandmorty.network.KtorClient
-import com.example.rickandmorty.network.KtorLocationService
-import com.example.rickandmorty.network.KtorLocationServiceImpl
+import com.example.rickandmorty.network.KtorService
+import com.example.rickandmorty.network.KtorServiceImpl
 import com.example.rickandmorty.network.RetrofitCharNetService
 import com.example.rickandmorty.network.RetrofitChatNetServiceImpl
 import com.example.rickandmorty.repository.CharRepository
@@ -17,7 +16,8 @@ object ServiceLocator {
 
     //private var charNetwork: CharNetwork? = null
     private var retrofitCharNetService: RetrofitCharNetService? = null
-    private var ktorLocationService: KtorLocationService? = null
+    private var ktorService: KtorService? = null
+
     @Volatile
     var charRepository: CharRepository? = null
         @VisibleForTesting set
@@ -31,25 +31,30 @@ object ServiceLocator {
     fun provideCharRepository(): CharRepository {
         synchronized(this) {
             val retrofitCharNetService = retrofitCharNetService ?: CharNetwork.charRestDb
-            return CharRepository(retrofitCharNetService = RetrofitChatNetServiceImpl(retrofitCharNetService))
+            return CharRepository(
+                retrofitCharNetService = RetrofitChatNetServiceImpl(
+                    retrofitCharNetService
+                )
+            )
         }
     }
 
     fun provideLocationRepository(): LocationRepository {
         synchronized(this) {
-            val ktorLocationServiceImpl = ktorLocationService ?:
-            KtorLocationServiceImpl(KtorClient.ktorFinalClient,
-                BASE_URL)
-            return LocationRepository(ktorLocationService = ktorLocationServiceImpl)
+            val ktorLocationServiceImpl = ktorService ?: KtorServiceImpl(
+                KtorClient.ktorFinalClient,
+                BASE_URL
+            )
+            return LocationRepository(ktorService = ktorLocationServiceImpl)
         }
     }
 
     fun provideEpisodeRepository(): EpisodeRepository {
         synchronized(this) {
-            val ktorLocationServiceImpl = ktorLocationService ?:
-            KtorLocationServiceImpl(KtorClient.ktorFinalClient, BASE_URL
+            val ktorLocationServiceImpl = ktorService ?: KtorServiceImpl(
+                KtorClient.ktorFinalClient, BASE_URL
             )
-            return EpisodeRepository(ktorLocationService = ktorLocationServiceImpl)
+            return EpisodeRepository(ktorService = ktorLocationServiceImpl)
         }
     }
 }

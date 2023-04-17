@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @JsonClass(generateAdapter = true)
 @Serializable
 data class LocationResults (
-    val info    : Info              = Info(),
+    val info : Info = Info(),
     val results: List<MainLocation>
 )
 

@@ -8,6 +8,9 @@ import androidx.paging.PagingState
 import com.example.rickandmorty.model.Character
 import com.example.rickandmorty.network.RetrofitCharNetService
 import com.example.rickandmorty.network.RetrofitChatNetServiceImpl
+import com.example.rickandmorty.util.Constants
+import com.example.rickandmorty.util.Constants.HTTP_404
+import com.example.rickandmorty.util.Constants.PAGE
 import retrofit2.HttpException
 
 class CharacterPagingSource(
@@ -24,21 +27,21 @@ class CharacterPagingSource(
 
             //Log.e("good", "no ${response.results.map { it.id }.joinToString(",")}")
 
-            //var nextPageNumber: Int? = null
+            var nextPageNumber: Int? = null
 
-//            if (response.info.next != null) {
-//                val uri = Uri.parse(response.info.next)
-//                val nextPageQuery = uri.getQueryParameter("page")
-//                nextPageNumber = nextPageQuery?.toInt()
-//            }
+            if (response.info.next != null) {
+                val uri = Uri.parse(response.info.next)
+                val nextPageQuery = uri.getQueryParameter(PAGE)
+                nextPageNumber = nextPageQuery?.toInt()
+            }
 
             LoadResult.Page(
                 data = response.results,
                 prevKey = if (pageNumber == 1) null else pageNumber - 1,
-                nextKey = if(query.isEmpty()) Uri.parse(response.info.next).getQueryParameter("page")?.toInt() else null
+                nextKey = if(query.isEmpty()) nextPageNumber else null
             )
         } catch (ex: Exception) {
-                if(ex.toString().contains("HTTP 404")){
+                if(ex.toString().contains(HTTP_404)){
                     return LoadResult.Page(
                         data = listOf(), null, null
                     )

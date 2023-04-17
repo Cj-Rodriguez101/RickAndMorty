@@ -1,6 +1,5 @@
 package com.example.rickandmorty.fragment.episodes
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +36,7 @@ class EpisodeSingleFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         val binding: FragmentEpisodeSBinding = FragmentEpisodeSBinding
             .inflate(inflater, container, false)
@@ -72,17 +71,11 @@ class EpisodeSingleFragment : Fragment() {
 
         binding.youtubePlayerView.initialize((youTubePlayerListener!!), iFramePlayerOptions)
 
-//        binding.youtubePlayerView.getYouTubePlayerWhenReady(object : YouTubePlayerCallback{
-//            override fun onYouTubePlayer(youTubePlayer: YouTubePlayer) {
-//
-//            }
-//
-//        })
         if (backCallback == null){
             backCallback = object : OnBackPressedCallback(true){
                 override fun handleOnBackPressed() {
 
-                    //(requireActivity() as MainActivity).changeOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                    episodeViewModel.setQuery("")
                     if (isFullscreen) {
                         // if the player is in fullscreen, exit fullscreen
                         youTubePlayerOut?.toggleFullscreen()
@@ -109,8 +102,6 @@ class EpisodeSingleFragment : Fragment() {
                 binding.youtubePlayerView.visibility = View.GONE
                 binding.fullScreenViewContainer.visibility = View.VISIBLE
                 binding.fullScreenViewContainer.addView(fullscreenView)
-
-                // optionally request landscape orientation
             }
 
             override fun onExitFullscreen() {

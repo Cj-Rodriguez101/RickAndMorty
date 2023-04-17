@@ -13,21 +13,21 @@ import java.util.concurrent.TimeUnit
 
 interface RetrofitCharNetService {
 
-    @GET("character")
-    suspend fun getCharactersWithPage(
-        @Query("page") page: Int
-    ): CharResults
-
-    @GET("character")
-    suspend fun searchCharactersWithPage(
-        @Query("name") name: String
-    ): CharResults
-
 //    @GET("character")
-//    suspend fun searchAndNewCharactersWithPage(
-//        @Query("page") page: Int,
+//    suspend fun getCharactersWithPage(
+//        @Query("page") page: Int
+//    ): CharResults
+//
+//    @GET("character")
+//    suspend fun searchCharactersWithPage(
 //        @Query("name") name: String
 //    ): CharResults
+
+    @GET("character")
+    suspend fun searchAndNewCharactersWithPage(
+        @Query("page") page: Int,
+        @Query("name") name: String
+    ): CharResults
 }
 
 //private val moshi = Moshi.Builder()

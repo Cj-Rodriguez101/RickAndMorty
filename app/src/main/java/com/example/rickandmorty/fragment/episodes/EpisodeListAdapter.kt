@@ -46,14 +46,6 @@ class EpisodeListAdapter(private val onClick: (Episode) -> Unit):
         }
     }
 
-//    override fun getItemViewType(position: Int): Int {
-//        //return super.getItemViewType(position)
-//        var viewType = 0
-//        getItem(position)?.let {
-//            holder.bind(it)
-//        }
-//    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpisodeListViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.episode_list_item, parent, false)
@@ -64,10 +56,10 @@ class EpisodeListAdapter(private val onClick: (Episode) -> Unit):
 
 object EpisodeDiffCallback : DiffUtil.ItemCallback<Episode>() {
     override fun areItemsTheSame(oldItem: Episode, newItem: Episode): Boolean {
-        return oldItem == newItem
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: Episode, newItem: Episode): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem == newItem
     }
 }

@@ -1,8 +1,9 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.example.rickandmorty.fragment.location
 
 import android.app.SearchManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -11,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,7 +20,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
 import com.example.rickandmorty.databinding.FragmentLocationListBinding
 import com.example.rickandmorty.util.PostsLoadStateAdapter
@@ -44,27 +43,25 @@ class LocationListFragment : Fragment(), MenuProvider {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         val binding: FragmentLocationListBinding = FragmentLocationListBinding
             .inflate(inflater, container, false)
         fragBinding = binding
 
-        val menuHost: MenuHost = requireActivity()
-        (activity as MainActivity).setSupportActionBar(binding.locationToolbar)
-        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        binding.locationToolbar.inflateMenu(R.menu.location_menu)
+
+        binding.locationToolbar.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         binding.apply {
             adapter = LocationListAdapter (){
                 locationViewModel.setQuery("")
-                Log.e("click", it.name)
             }
 
             binding.locationRecyclerView.adapter = adapter!!.withLoadStateHeaderAndFooter(
                 header = PostsLoadStateAdapter(adapter!!),
                 footer = PostsLoadStateAdapter(adapter!!)
             )
-            //binding.locationRecyclerView.adapter = adapter
             binding.locationRecyclerView.layoutManager = LinearLayoutManager(requireContext().applicationContext)
         }
 
@@ -83,7 +80,7 @@ class LocationListFragment : Fragment(), MenuProvider {
             }
         }
 
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launch {
             locationViewModel.isLoading.collect{isLoading->
                 if(isLoading){
                     binding.localProgressBar.visibility = View.VISIBLE
@@ -119,7 +116,6 @@ class LocationListFragment : Fragment(), MenuProvider {
                 binding.locationErrorMsg.isVisible = loadStates.refresh is LoadState.Error
             }
         }
-        // Inflate the layout for this fragment
         return binding.root
     }
 
@@ -131,7 +127,7 @@ class LocationListFragment : Fragment(), MenuProvider {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.location_menu, menu)
+        //menuInflater.inflate(R.menu.location_menu, menu)
 
         val applicationContext = requireContext().applicationContext
 

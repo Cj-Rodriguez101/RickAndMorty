@@ -1,29 +1,24 @@
 package com.example.rickandmorty.fragment.location
 
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.rickandmorty.ServiceLocator
-import com.example.rickandmorty.fragment.characters.CharViewModel
-import com.example.rickandmorty.model.MainLocation
 import com.example.rickandmorty.repository.LocationRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class LocationViewModel(private val locationRepository: LocationRepository): ViewModel() {
 
     private val _query: MutableStateFlow<String> = MutableStateFlow<String>("")
+    val query: StateFlow<String> = _query
 
     val myMutableFlow = _query.flatMapLatest {
-        Log.e("mutable", it)
         locationRepository.getPagedList(it).cachedIn(viewModelScope).distinctUntilChanged()
     }
 
@@ -36,6 +31,7 @@ class LocationViewModel(private val locationRepository: LocationRepository): Vie
 
 }
 
+@ExperimentalCoroutinesApi
 @Suppress("UNCHECKED_CAST")
 class LocationViewModelFactory()
     : ViewModelProvider.NewInstanceFactory() {

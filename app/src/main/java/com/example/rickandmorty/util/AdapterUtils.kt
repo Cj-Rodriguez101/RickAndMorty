@@ -23,7 +23,6 @@ class NetworkStateItemViewHolder(
 
     fun bind(loadState: LoadState) {
         if (loadState is LoadState.Error) {
-            //errorMessage.text = loadState.error.localizedMessage
             errorMessage.text = parent.context.applicationContext.getString(R.string.no_internet)
         }
 

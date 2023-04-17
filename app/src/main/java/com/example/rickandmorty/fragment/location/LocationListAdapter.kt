@@ -6,13 +6,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.R
 import com.example.rickandmorty.model.MainLocation
 
-class LocationListAdapter(private val onClick: (MainLocation) -> Unit)
-    : PagingDataAdapter<MainLocation, LocationListAdapter.LocationViewHolder>(LocationDiffCallback) {
+class LocationListAdapter(private val onClick: (MainLocation) -> Unit) :
+    PagingDataAdapter<MainLocation, LocationListAdapter.LocationViewHolder>(LocationDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -42,7 +41,7 @@ class LocationListAdapter(private val onClick: (MainLocation) -> Unit)
             }
         }
 
-        fun bind(location: MainLocation){
+        fun bind(location: MainLocation) {
             currentLocation = location
             nameTextView.text = location.name
             typeTextView.text = location.type
