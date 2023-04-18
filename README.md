@@ -3,7 +3,7 @@ Rick And Morty App Retrieving Data From Api
 
 ## Features
 * Search by name in characters, locations and episodes
-* Play rick and morty episode from youtube
+* Play rick and morty episode highlight from youtube
 
 ## Architecture - MVVM
 ## Tools
