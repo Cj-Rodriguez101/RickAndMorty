@@ -13,7 +13,7 @@ Rick And Morty App Retrieving Data From Api
 * Gson
 * Retrofit for Character Query
 * Ktor for Location and Episode Query
-* Android Youtube Player By [PierfrancescoSoffritti](https://github.com/PierfrancescoSoffritti)
+* Android Youtube Player By [PierfrancescoSoffritti](https://github.com/PierfrancescoSoffritti/android-youtube-player)
 
 <p align="center"
 float="center">
