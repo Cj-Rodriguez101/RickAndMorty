@@ -13,32 +13,31 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
-import com.example.rickandmorty.databinding.FragmentEpisodeSBinding
+import com.example.rickandmorty.databinding.FragmentEpisodeSingleBinding
+import com.example.rickandmorty.util.VideoUtils
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.FullscreenListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@ExperimentalCoroutinesApi
 class EpisodeSingleFragment : Fragment() {
 
     private val episodeViewModel: EpisodeViewModel by viewModels({requireParentFragment()})
     private var youTubePlayerListener: YouTubePlayerListener? = null
     private var youTubePlayerOut: YouTubePlayer? = null
-    private var fragBinding: FragmentEpisodeSBinding? = null
+    private var fragBinding: FragmentEpisodeSingleBinding? = null
     private var isFullscreen = false
     var backCallback: OnBackPressedCallback? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        val binding: FragmentEpisodeSBinding = FragmentEpisodeSBinding
+        val binding: FragmentEpisodeSingleBinding = FragmentEpisodeSingleBinding
             .inflate(inflater, container, false)
 
         val iFramePlayerOptions = IFramePlayerOptions.Builder()
@@ -49,11 +48,14 @@ class EpisodeSingleFragment : Fragment() {
         lifecycle.addObserver(binding.youtubePlayerView)
 
         val navController = findNavController()
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.episodeSingleFragment -> {
                     episodeViewModel.selectedEpisode.value?.let { episode->
                         binding.singleToolbar.title = episode.name
+                        binding.name.text = episode.name
+                        binding.number.text = episode.episode
+                        binding.dateCreated.text = episode.air_date
                     }
                 }
             }
@@ -61,11 +63,19 @@ class EpisodeSingleFragment : Fragment() {
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         (binding.singleToolbar as Toolbar)
             .setupWithNavController(navController, appBarConfiguration)
+        (binding.singleToolbar as Toolbar)
+            .setNavigationOnClickListener{
+                (requireActivity() as MainActivity).changeOrientation(false)
+                navController.navigateUp()
+            }
 
         youTubePlayerListener = object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
                 youTubePlayerOut = youTubePlayer
-                youTubePlayer.cueVideo("qtdCIs6JdXg", 0f)
+                val videoId = episodeViewModel.selectedEpisode.value?.episode?.let{
+                    VideoUtils.getVideoIdBasedOnEpisode(it)
+                }?:"qtdCIs6JdXg"
+                youTubePlayer.cueVideo(videoId, 0f)
             }
         }
 
@@ -76,11 +86,10 @@ class EpisodeSingleFragment : Fragment() {
                 override fun handleOnBackPressed() {
 
                     episodeViewModel.setQuery("")
+                    (requireActivity() as MainActivity).changeOrientation(false)
                     if (isFullscreen) {
                         // if the player is in fullscreen, exit fullscreen
                         youTubePlayerOut?.toggleFullscreen()
-                        (requireActivity() as MainActivity).changeOrientation(false)
-
                         // the video will continue playing in the player
                         binding.singleToolbar.visibility = View.VISIBLE
                     } else {

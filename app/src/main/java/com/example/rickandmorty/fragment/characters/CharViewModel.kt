@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 class CharViewModel(private val charRepository: CharRepository) : ViewModel() {
 
     private val _selectedCharacter: MutableStateFlow<Character?> =
-        MutableStateFlow<Character?>(null)
+        MutableStateFlow(null)
     val selectedCharacter: StateFlow<Character?> = _selectedCharacter
 
     private val _query: MutableStateFlow<String> = MutableStateFlow<String>("")

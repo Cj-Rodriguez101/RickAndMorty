@@ -29,7 +29,6 @@ class EpisodeListAdapter(private val onClick: (Episode) -> Unit):
             }
         }
 
-        /* Bind character and image. */
         fun bind(episode: Episode) {
             currentEpisode = episode
 

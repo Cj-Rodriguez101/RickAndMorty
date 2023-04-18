@@ -1,17 +1,12 @@
 package com.example.rickandmorty.paging
 
 import android.net.Uri
-import android.util.Log
-import androidx.paging.LoadState
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.rickandmorty.model.Character
-import com.example.rickandmorty.network.RetrofitCharNetService
 import com.example.rickandmorty.network.RetrofitChatNetServiceImpl
-import com.example.rickandmorty.util.Constants
 import com.example.rickandmorty.util.Constants.HTTP_404
 import com.example.rickandmorty.util.Constants.PAGE
-import retrofit2.HttpException
 
 class CharacterPagingSource(
     private val backend: RetrofitChatNetServiceImpl,
@@ -21,11 +16,8 @@ class CharacterPagingSource(
         params: LoadParams<Int>
     ): LoadResult<Int, Character> {
         return try {
-            // Start refresh at page 1 if undefined.
             val pageNumber = params.key ?: 1
             val response = backend.searchCharactersWithPage(query, pageNumber)
-
-            //Log.e("good", "no ${response.results.map { it.id }.joinToString(",")}")
 
             var nextPageNumber: Int? = null
 
@@ -51,13 +43,6 @@ class CharacterPagingSource(
     }
 
     override fun getRefreshKey(state: PagingState<Int, Character>): Int? {
-        // Try to find the page key of the closest page to anchorPosition, from
-        // either the prevKey or the nextKey, but you need to handle nullability
-        // here:
-        //  * prevKey == null -> anchorPage is the first page.
-        //  * nextKey == null -> anchorPage is the last page.
-        //  * both prevKey and nextKey null -> anchorPage is the initial page, so
-        //    just return null.
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)

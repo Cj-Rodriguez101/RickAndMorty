@@ -1,7 +1,6 @@
 package com.example.rickandmorty.paging
 
 import android.net.Uri
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.rickandmorty.model.MainLocation
@@ -34,7 +33,6 @@ class LocationPagingSource(
                 nextKey = if(query.isEmpty()) nextPageNumber else null
             )
         } catch (ex: Exception) {
-            Log.e("dea", ex.toString())
             if(ex.toString().contains(HTTP_404)){
                 return LoadResult.Page(
                     data = listOf(), null, null

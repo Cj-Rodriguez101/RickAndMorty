@@ -11,7 +11,7 @@ object KtorClient {
         install(JsonFeature) {
             serializer = KotlinxSerializer(
                 Json {
-                    ignoreUnknownKeys = true // if the server sends extra fields, ignore them
+                    ignoreUnknownKeys = true
                 }
             )
         }

@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
@@ -130,6 +131,10 @@ class EpisodeFragment : Fragment(), MenuProvider {
             SearchManager::class.java
         ) as SearchManager
         (menu.findItem(R.id.episode_search_menu).actionView as SearchView).apply {
+
+            val searchEditText = findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+            searchEditText.setTextColor(resources.getColor(R.color.white))
+            searchEditText.setHintTextColor(resources.getColor(R.color.white))
             setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
             setIconifiedByDefault(true)
             setOnQueryTextListener(object : SearchView.OnQueryTextListener{

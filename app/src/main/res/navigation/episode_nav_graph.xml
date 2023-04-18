@@ -17,5 +17,5 @@
     <fragment
         android:id="@+id/episodeSingleFragment"
         android:name="com.example.rickandmorty.fragment.episodes.EpisodeSingleFragment"
-        tools:layout="@layout/fragment_episode_s" />
+        tools:layout="@layout/fragment_episode_single" />
 </navigation>

@@ -8,6 +8,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/episode_app_bar"
             android:layout_width="match_parent"
+            android:background="@color/purple_500"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true">
 
@@ -16,7 +17,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                app:title="Characters"
+                app:title="Episodes"
                 app:collapsedTitleTextColor="@color/white"
                 app:expandedTitleTextColor="@color/white"
                 app:contentScrim="@color/purple_500"
@@ -28,7 +29,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/rick_and_morty_episode_svg"
+                    android:src="@drawable/rick_alone_svg"
                     app:layout_collapseMode="parallax"
                     app:layout_collapseParallaxMultiplier="0.7" />
 
@@ -37,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+                    android:theme="@style/ToolBarTheme"
                     />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>

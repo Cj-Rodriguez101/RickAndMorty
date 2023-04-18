@@ -1,12 +1,10 @@
 package com.example.rickandmorty.paging
 
 import android.net.Uri
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.rickandmorty.model.Episode
 import com.example.rickandmorty.network.KtorService
-import com.example.rickandmorty.util.Constants
 import com.example.rickandmorty.util.Constants.HTTP_404
 import com.example.rickandmorty.util.Constants.PAGE
 

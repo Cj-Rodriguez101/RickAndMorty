@@ -14,7 +14,6 @@ import com.example.rickandmorty.util.Constants.BASE_URL
 
 object ServiceLocator {
 
-    //private var charNetwork: CharNetwork? = null
     private var retrofitCharNetService: RetrofitCharNetService? = null
     private var ktorService: KtorService? = null
 

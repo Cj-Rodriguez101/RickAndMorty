@@ -12,16 +12,16 @@
             android:id="@+id/single_toolbar"
             android:layout_width="match_parent"
             android:background="@color/purple_500"
+            app:titleTextColor="@color/white"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+            android:theme="@style/ToolBarTheme"
             />
 
         <ImageView
             android:id="@+id/single_character_image"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:layout_margin="16dp"
-            android:src="@drawable/rick_figma"/>
+            android:layout_margin="16dp" />
 
         <TextView
             android:id="@+id/single_character_name"

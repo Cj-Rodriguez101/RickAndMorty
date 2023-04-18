@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.MenuProvider
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+
 
 class CharacterListFragment : Fragment(), MenuProvider
 {
@@ -134,14 +136,16 @@ class CharacterListFragment : Fragment(), MenuProvider
 
         @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        //menuInflater.inflate(R.menu.character_menu, menu)
 
         val applicationContext = requireContext().applicationContext
 
         val searchManager =
             getSystemService(applicationContext, SearchManager::class.java) as SearchManager
         (menu.findItem(R.id.character_search_menu).actionView as SearchView).apply {
-            // Assumes current activity is the searchable activity
+
+            val searchEditText = findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+            searchEditText.setTextColor(resources.getColor(R.color.white))
+            searchEditText.setHintTextColor(resources.getColor(R.color.white))
             setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
             setIconifiedByDefault(true)
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {

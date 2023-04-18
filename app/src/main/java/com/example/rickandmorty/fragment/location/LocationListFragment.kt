@@ -10,6 +10,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
@@ -136,7 +137,9 @@ class LocationListFragment : Fragment(), MenuProvider {
             SearchManager::class.java
         ) as SearchManager
         (menu.findItem(R.id.location_search_menu).actionView as SearchView).apply {
-            // Assumes current activity is the searchable activity
+            val searchEditText = findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+            searchEditText.setTextColor(resources.getColor(R.color.white))
+            searchEditText.setHintTextColor(resources.getColor(R.color.white))
             setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
             setIconifiedByDefault(true)
             setOnQueryTextListener(object : SearchView.OnQueryTextListener{

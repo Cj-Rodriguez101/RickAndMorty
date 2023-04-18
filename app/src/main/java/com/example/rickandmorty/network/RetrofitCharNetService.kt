@@ -2,6 +2,7 @@ package com.example.rickandmorty.network
 
 import com.example.rickandmorty.model.CharResults
 import com.example.rickandmorty.model.LocationResults
+import com.example.rickandmorty.util.Constants.BASE_URL
 import kotlinx.coroutines.Deferred
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -13,26 +14,12 @@ import java.util.concurrent.TimeUnit
 
 interface RetrofitCharNetService {
 
-//    @GET("character")
-//    suspend fun getCharactersWithPage(
-//        @Query("page") page: Int
-//    ): CharResults
-//
-//    @GET("character")
-//    suspend fun searchCharactersWithPage(
-//        @Query("name") name: String
-//    ): CharResults
-
     @GET("character")
     suspend fun searchAndNewCharactersWithPage(
         @Query("page") page: Int,
         @Query("name") name: String
     ): CharResults
 }
-
-//private val moshi = Moshi.Builder()
-//    .add(KotlinJsonAdapterFactory())
-//    .build()
 
 private val okHttpClient = OkHttpClient.Builder()
     .connectTimeout(0, TimeUnit.SECONDS)
@@ -42,10 +29,8 @@ private val okHttpClient = OkHttpClient.Builder()
 
 object CharNetwork {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://rickandmortyapi.com/api/")
-        //.addConverterFactory(MoshiConverterFactory.create())
+        .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
-        //.addCallAdapterFactory(CoroutineCallAdapterFactory())
         .client(okHttpClient)
         .build()
 
