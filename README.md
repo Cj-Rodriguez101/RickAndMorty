@@ -1,7 +1,8 @@
 # RickAndMorty
-Rick And Morty App Retrieving Data From Api
+Rick And Morty App Retrieving Data From [Api](https://rickandmortyapi.com/documentation/#introduction)
 
 ## Features
+* Retrieve and Paginate Data From Network
 * Search by name in characters, locations and episodes screens
 * Play rick and morty episode highlight from youtube
 
