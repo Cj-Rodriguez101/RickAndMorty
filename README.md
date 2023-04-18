@@ -19,7 +19,7 @@ Rick And Morty App Retrieving Data From Api
 float="center">
 <img src="https://github.com/Cj-Rodriguez101/RickAndMorty/blob/master/rick/characters_fill.jpg" width="270" height="480"/>
 <img src="https://github.com/Cj-Rodriguez101/RickAndMorty/blob/master/rick/characters_retry.jpg" width="270" height="480"/>
-<img src="https://github.com/Cj-Rodriguez101/RickAndMorty/blob/master/rick/epsiode_inside.jpg" width="270" height="480"/>
-<img src="https://github.com/Cj-Rodriguez101/RickAndMorty/blob/master/rick/epsiode_list.jpg" width="270" height="480"/>
 <img src="https://github.com/Cj-Rodriguez101/RickAndMorty/blob/master/rick/location_list.jpg" width="270" height="480"/>
+<img src="https://github.com/Cj-Rodriguez101/RickAndMorty/blob/master/rick/epsiode_list.jpg" width="270" height="480"/>
+<img src="https://github.com/Cj-Rodriguez101/RickAndMorty/blob/master/rick/epsiode_inside.jpg" width="270" height="480"/>
 </p>
